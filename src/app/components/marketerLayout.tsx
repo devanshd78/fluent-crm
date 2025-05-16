@@ -41,7 +41,7 @@ export default function MarketerSidebar({
             onClick={() => setMobileOpen(false)}
             className={cn(
               'block px-4 py-2 rounded-lg text-sm font-medium transition',
-              pathname === item.path
+              pathname.startsWith(item.path)
                 ? 'bg-green-100 text-green-600 font-semibold'
                 : 'text-green-700 hover:bg-green-200'
             )}

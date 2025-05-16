@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { ReactNode, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
 import { Menu, X, ChevronDown, ChevronUp } from 'lucide-react'
 
@@ -21,11 +21,19 @@ const navItems = [
   },
 ]
 
-
 export default function AdminLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname()
   const [mobileOpen, setMobileOpen] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(false)
+
+  useEffect(() => {
+    // Auto-open Settings if current route matches any of its children
+    const isSettingsPath = navItems
+      .find((item) => item.children)
+      ?.children?.some((child) => pathname.startsWith(child.path))
+
+    if (isSettingsPath) setSettingsOpen(true)
+  }, [pathname])
 
   const toggleSidebar = () => setMobileOpen(!mobileOpen)
 
@@ -60,7 +68,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                 onClick={() => setMobileOpen(false)}
                 className={cn(
                   'block px-4 py-2 rounded-lg text-sm font-medium transition hover:bg-purple-200',
-                  pathname === item.path
+                  pathname.startsWith(item.path)
                     ? 'bg-purple-100 text-purple-600'
                     : 'text-gray-700'
                 )}
@@ -71,10 +79,19 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
               <div key={item.name}>
                 <button
                   onClick={() => setSettingsOpen(!settingsOpen)}
-                  className="flex items-center justify-between w-full px-4 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100"
+                  className={cn(
+                    'flex items-center justify-between w-full px-4 py-2 rounded-lg text-sm font-medium transition',
+                    pathname.startsWith(item.path)
+                      ? 'bg-purple-100 text-purple-600'
+                      : 'text-gray-700 hover:bg-gray-100'
+                  )}
                 >
                   {item.name}
-                  {settingsOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                  {settingsOpen ? (
+                    <ChevronUp className="h-4 w-4" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4" />
+                  )}
                 </button>
                 {settingsOpen && (
                   <div className="pl-6 mt-1 space-y-1">
@@ -85,7 +102,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                         onClick={() => setMobileOpen(false)}
                         className={cn(
                           'block px-3 py-1 rounded-md text-sm transition hover:bg-gray-100',
-                          pathname === child.path
+                          pathname.startsWith(child.path)
                             ? 'bg-gray-100 text-blue-600'
                             : 'text-gray-600'
                         )}
@@ -101,8 +118,6 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         </nav>
 
         <div className="p-4 border-t md:mt-auto">
-         
-
           <button
             onClick={() => {
               localStorage.removeItem('token')
@@ -116,7 +131,9 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       </aside>
 
       {/* Main content */}
-      <main className="flex-1 p-6 pt-20 md:pt-6 overflow-y-auto w-full bg-purple-50">{children}</main>
+      <main className="flex-1 p-6 pt-20 md:pt-6 overflow-y-auto w-full bg-purple-50">
+        {children}
+      </main>
     </div>
   )
 }
