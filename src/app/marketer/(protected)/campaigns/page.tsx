@@ -9,6 +9,8 @@ import { Button } from '@/components/ui/button'
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
 import { Card, CardContent } from '@/components/ui/card'
 import { get, post } from '@/lib/api'
+import RichTextEditor from '@/app/components/richTextEditor'
+
 
 const MySwal = withReactContent(Swal)
 
@@ -307,12 +309,9 @@ export default function CampaignPage() {
                                         id="message"
                                         value={message}
                                         onChange={(e) => setMessage(e.target.value)}
-                                        placeholder="Write your email content here..."
-                                        rows={8}
-                                        className="border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-400"
-                                    />
+                                        placeholder="Email content"
+                                        className="border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-400" />
                                 </div>
-
                                 <Button
                                     onClick={handleSend}
                                     disabled={loading}

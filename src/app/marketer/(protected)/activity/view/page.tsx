@@ -54,7 +54,7 @@ export default function ActivityViewPage() {
   const [editEmail, setEditEmail] = useState('')
 
 
-  const pageSize = 5
+  const pageSize = 10
 
   const fetchActivity = async () => {
     try {

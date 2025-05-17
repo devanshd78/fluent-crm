@@ -51,7 +51,7 @@ export default function MarketerSidebar({
         ))}
       </nav>
 
-      <div className="p-4 border-t bg-green-50 md:mt-auto">
+      <div className="p-4 border-t md:mt-auto">
         <button
           onClick={() => {
             localStorage.removeItem('token')
