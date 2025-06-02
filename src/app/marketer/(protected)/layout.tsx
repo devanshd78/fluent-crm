@@ -2,6 +2,7 @@
 
 import { ReactNode, useState } from 'react'
 import MarketerSidebar from '@/app/components/marketerLayout'
+import TopBar from '@/app/components/marketerTop'
 import { Menu, X } from 'lucide-react'
 
 export default function MarketerLayout({ children }: { children: ReactNode }) {
@@ -22,10 +23,18 @@ export default function MarketerLayout({ children }: { children: ReactNode }) {
       {/* Sidebar */}
       <MarketerSidebar mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
 
-      {/* Main Content */}
-      <main className="fflex-1 p-6 pt-20 md:pt-6 overflow-y-auto w-full bg-green-50">
-        {children}
-      </main>
+      {/* Content Area */}
+      <div className="flex-1 flex flex-col">
+        {/* Top Bar (hidden on mobile) */}
+        <div className="hidden md:block sticky top-0 z-10">
+          <TopBar />
+        </div>
+
+        {/* Main Content */}
+        <main className="flex-1 p-6 pt-6 md:pt-4 overflow-y-auto w-full">
+          {children}
+        </main>
+      </div>
     </div>
   )
 }

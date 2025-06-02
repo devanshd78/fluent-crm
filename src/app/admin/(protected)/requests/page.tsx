@@ -13,7 +13,7 @@ interface Marketer {
   email: string
   phoneNumber: string
   marketerId: string
-  updatedAt: string
+  createdAt: string
 }
 
 const MySwal = Swal
@@ -62,7 +62,7 @@ export default function MarketerStatusPage() {
     if (!confirm.isConfirmed) return
 
     try {
-      await post(`/admin/marketers/${marketerId}/verify`, { action })
+      await post(`/admin/marketer/${marketerId}/verify`, { action })
       MySwal.fire('Success', `Marketer ${action}d successfully.`, 'success')
       fetchPendingMarketers()
       fetchMarketersByStatus()
@@ -174,7 +174,7 @@ export default function MarketerStatusPage() {
                   <th className="p-3 text-left text-xs font-semibold text-gray-600">Email</th>
                   <th className="p-3 text-left text-xs font-semibold text-gray-600">Phone</th>
                   <th className="p-3 text-left text-xs font-semibold text-gray-600">Marketer ID</th>
-                  <th className="p-3 text-left text-xs font-semibold text-gray-600">Updated At</th>
+                  <th className="p-3 text-left text-xs font-semibold text-gray-600">Created At</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -184,7 +184,7 @@ export default function MarketerStatusPage() {
                     <td className="p-3 text-gray-600">{m.email}</td>
                     <td className="p-3 text-gray-600">{m.phoneNumber}</td>
                     <td className="p-3 text-gray-500">{m.marketerId}</td>
-                    <td className="p-3 text-gray-500">{new Date(m.updatedAt).toLocaleDateString()}</td>
+                    <td className="p-3 text-gray-500">{new Date(m.createdAt).toLocaleDateString()}</td>
                   </tr>
                 ))}
               </tbody>

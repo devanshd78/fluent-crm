@@ -16,7 +16,8 @@ const navItems = [
     name: 'Settings',
     path: '/admin/settings',
     children: [
-      { name: 'User Access', path: '/admin/settings/user-access' }
+      // { name: 'User Access', path: '/admin/settings/user-access' },
+      { name: 'Manage Email', path: '/admin/settings/manage-email' }
     ],
   },
 ]

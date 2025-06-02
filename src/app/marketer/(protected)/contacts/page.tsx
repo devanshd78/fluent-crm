@@ -85,7 +85,7 @@ export default function AdminActivityPage() {
             setActivities(response.data)
             setMeta(response.meta)
         } catch (err) {
-            console.error('Failed to fetch activity list:', err)
+            console.error('Failed to fetch Contacts list:', err)
         }
     }
 
@@ -96,7 +96,7 @@ export default function AdminActivityPage() {
 
     const handleDelete = async (id: string) => {
         const result = await Swal.fire({
-            title: 'Delete this activity?',
+            title: 'Delete this Contacts?',
             text: 'This action cannot be undone.',
             icon: 'warning',
             showCancelButton: true,
@@ -115,7 +115,7 @@ export default function AdminActivityPage() {
                     Swal.fire({
                         icon: 'success',
                         title: 'Deleted!',
-                        text: 'Activity has been removed.',
+                        text: 'Contacts has been removed.',
                         timer: 1000,
                         showConfirmButton: false,
                         timerProgressBar: true,
@@ -152,7 +152,7 @@ export default function AdminActivityPage() {
         if (!newActivityName.trim()) {
             Swal.fire({
                 icon: 'warning',
-                title: 'Activity name is required.',
+                title: 'Contacts name is required.',
                 timer: 1000,
                 showConfirmButton: false,
                 timerProgressBar: true,
@@ -176,7 +176,7 @@ export default function AdminActivityPage() {
             if (res.status === 'success') {
                 Swal.fire({
                     icon: 'success',
-                    title: 'Activity created successfully.',
+                    title: 'Contacts created successfully.',
                     timer: 1000,
                     showConfirmButton: false,
                     timerProgressBar: true,
@@ -185,7 +185,7 @@ export default function AdminActivityPage() {
                 setNewActivityName('')
                 fetchActivities()
             } else {
-                Swal.fire('Error', res.message || 'Failed to create activity.', 'error')
+                Swal.fire('Error', res.message || 'Failed to create Contacts.', 'error')
             }
         } catch (err: any) {
             Swal.fire({
@@ -202,7 +202,7 @@ export default function AdminActivityPage() {
 
     const handleUpdateActivity = async () => {
         if (!editingId || !editedName.trim()) {
-            Swal.fire('Error', 'Activity name is required.', 'warning')
+            Swal.fire('Error', 'Contacts name is required.', 'warning')
             return
         }
 
@@ -215,7 +215,7 @@ export default function AdminActivityPage() {
             if (res.status === 'success') {
                 Swal.fire({
                     icon: 'success',
-                    title: 'Activity name updated.',
+                    title: 'Contacts name updated.',
                     timer: 1000,
                     showConfirmButton: false,
                     timerProgressBar: true,
@@ -244,8 +244,7 @@ export default function AdminActivityPage() {
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-800">Activity Logs</h1>
-                    <p className="text-sm text-gray-600">Track recent activity actions.</p>
+                    <h1 className="text-2xl font-bold text-gray-800">Contacts Logs</h1>
                 </div>
                 <Dialog>
                     <DialogTrigger asChild>
@@ -257,7 +256,7 @@ export default function AdminActivityPage() {
 
                     <DialogContent className="sm:max-w-md">
                         <DialogHeader>
-                            <DialogTitle>Create Activity</DialogTitle>
+                            <DialogTitle>Create Contacts</DialogTitle>
                         </DialogHeader>
                         <div className="grid gap-4 py-4">
                             <div className="grid grid-cols-4 items-center gap-4">
@@ -311,7 +310,7 @@ export default function AdminActivityPage() {
                                     setPage(1) // reset to page 1 on sort change
                                 }}
                             >
-                                Activity Name
+                                Contact Name
                                 {sortField === 'name' && (sortOrder === 'asc' ? ' ▲' : ' ▼')}
                             </TableHead>
 
@@ -338,7 +337,7 @@ export default function AdminActivityPage() {
                         {activities.length === 0 ? (
                             <TableRow>
                                 <TableCell colSpan={3} className="text-center text-gray-500 py-6">
-                                    No activities found.
+                                    No Contacts found.
                                 </TableCell>
                             </TableRow>
                         ) : (
@@ -383,7 +382,7 @@ export default function AdminActivityPage() {
                                             variant="ghost"
                                             size="sm"
                                             onClick={() =>
-                                                router.push(`/marketer/activity/view?id=${activity.activityId}`)
+                                                router.push(`/marketer/contacts/view?id=${activity.activityId}`)
                                             }
                                         >
                                             <Eye className="h-4 w-4" />

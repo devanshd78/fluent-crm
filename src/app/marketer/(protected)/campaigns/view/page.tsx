@@ -1,10 +1,11 @@
+// app/admin/(protected)/campaigns/view/page.tsx
 import React, { Suspense } from 'react'
-import ActivityViewPage from './activityPage'
+import ViewCampaignPage from './campaignPage'
 
 export default function ViewContacsPage() {
   return (
     <Suspense fallback={<div className="p-4 text-gray-600">Loading campaign…</div>}>
-      <ActivityViewPage />
+      <ViewCampaignPage />
     </Suspense>
   )
 }

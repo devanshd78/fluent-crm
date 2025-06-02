@@ -2,69 +2,103 @@
 
 import { useEffect, useState } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
+import { post } from '@/lib/api'
+import { Skeleton } from '@/components/ui/skeleton'
+import { useRouter } from 'next/navigation'
+
+interface DashboardData {
+  name: string
+  totalActivity: number
+  totalCampaigns: number
+}
 
 export default function MarketerDashboard() {
-    const [user, setUser] = useState<any>(null)
-    const router = useRouter()
+  const [dashboard, setDashboard] = useState<DashboardData | null>(null)
+  const [loading, setLoading] = useState<boolean>(true)
+  const router = useRouter()
 
-    //   useEffect(() => {
-    //     const token = localStorage.getItem('token')
-    //     if (!token) {
-    //       toast.error('Unauthorized. Please log in.')
-    //       router.push('/marketer/login')
-    //     } else {
-    //       // Optionally decode or fetch marketer info
-    //       setUser({ name: 'Marketer John' }) // Dummy name
-    //     }
-    //   }, [])
+  useEffect(() => {
+    const fetchDashboard = async () => {
+      const marketerId = localStorage.getItem('userId')
+      if (!marketerId) {
+        toast.error('Marketer ID not found. Please log in.')
+        router.push('/marketer/login')
+        return
+      }
 
-    return (
-        <div className="min-h-screen bg-white p-6 shadow-md rounded-lg">
-            <div className="max-w-6xl mx-auto space-y-6">
-                {/* Header */}
-                <div>
-                    <h1 className="text-3xl font-bold text-gray-900">Welcome, {user?.name} 👋</h1>
-                    <p className="text-gray-600">Here’s what’s happening with your campaigns today.</p>
-                </div>
+      try {
+        setLoading(true)
+        // Call your dashboard endpoint; it returns { name, totalActivity, totalCampaigns }
+        const res = await post('/marketer/dashboard', { marketerId })
+        if (res?.status === 'success') {
+          setDashboard(res.data as DashboardData)
+        } else {
+          throw new Error(res?.message || 'Unexpected API response')
+        }
+      } catch (err) {
+        console.error('Error fetching dashboard:', err)
+        toast.error('Failed to load dashboard data.')
+      } finally {
+        setLoading(false)
+      }
+    }
 
-                {/* Stats */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <Card className="bg-white border border-gray-200 shadow-md hover:shadow-lg transition">
-                        <CardContent className="p-4">
-                            <h2 className="text-sm text-gray-500">Total Campaigns</h2>
-                            <p className="text-2xl font-semibold text-gray-800">12</p>
-                        </CardContent>
-                    </Card>
+    fetchDashboard()
+  }, [router])
 
-                    <Card className="bg-white border border-gray-200 shadow-md hover:shadow-lg transition">
-                        <CardContent className="p-4">
-                            <h2 className="text-sm text-gray-500">Leads Generated</h2>
-                            <p className="text-2xl font-semibold text-gray-800">238</p>
-                        </CardContent>
-                    </Card>
-
-                    <Card className="bg-white border border-gray-200 shadow-md hover:shadow-lg transition">
-                        <CardContent className="p-4">
-                            <h2 className="text-sm text-gray-500">Conversions</h2>
-                            <p className="text-2xl font-semibold text-gray-800">57</p>
-                        </CardContent>
-                    </Card>
-                </div>
-
-                {/* Recent Activity */}
-                <div className="bg-white rounded-xl border border-gray-200 shadow-md p-6">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Recent Activity</h3>
-                    <ul className="space-y-3 text-sm text-gray-700">
-                        <li>📣 Campaign "<strong>Spring Sale</strong>" launched</li>
-                        <li>👤 34 new leads acquired</li>
-                        <li>✅ 10 conversions recorded yesterday</li>
-                        <li>📊 Lead report generated</li>
-                    </ul>
-                </div>
-            </div>
+  return (
+    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="bg-white p-6 rounded-lg shadow flex flex-col sm:flex-row items-start sm:items-center justify-between">
+          <div>
+            {loading ? (
+              <Skeleton className="h-8 w-1/3 mb-2 rounded" />
+            ) : (
+              <h1 className="text-3xl font-bold text-gray-900">
+                Welcome, {dashboard?.name} 👋
+              </h1>
+            )}
+            {loading ? (
+              <Skeleton className="h-4 w-1/2 rounded" />
+            ) : (
+              <p className="mt-1 text-gray-600">
+                Here’s a summary of your current activity.
+              </p>
+            )}
+          </div>
         </div>
-    )
+
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <Card className="bg-white border border-gray-200 shadow hover:shadow-lg transition">
+            <CardContent className="p-5">
+              <h2 className="text-sm text-gray-500">Total Activities</h2>
+              {loading ? (
+                <Skeleton className="mt-2 h-8 w-16 rounded" />
+              ) : (
+                <p className="mt-2 text-3xl font-semibold text-gray-800">
+                  {dashboard?.totalActivity ?? 0}
+                </p>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card className="bg-white border border-gray-200 shadow hover:shadow-lg transition">
+            <CardContent className="p-5">
+              <h2 className="text-sm text-gray-500">Total Campaigns</h2>
+              {loading ? (
+                <Skeleton className="mt-2 h-8 w-16 rounded" />
+              ) : (
+                <p className="mt-2 text-3xl font-semibold text-gray-800">
+                  {dashboard?.totalCampaigns ?? 0}
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  )
 }

@@ -1,77 +1,116 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Card, CardContent } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
 import { toast } from 'sonner'
 import { get } from '@/lib/api'
 
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+  TableCaption,
+} from '@/components/ui/table'
+import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
+import { useRouter } from 'next/navigation'
+
 interface Campaign {
-  _id: string
-  title: string
-  status: 'active' | 'paused' | 'completed'
-  leads: number
-  startDate: string
+  campaignId: string
+  activityId: string
+  marketerId: string
+  marketerName: string
+  activityName: string
+  contacts: { name: string; email: string }[]
+  subject: string
+  description: string
+  sentAt: string
 }
 
 export default function AdminCampaignsPage() {
+  const router = useRouter();
   const [campaigns, setCampaigns] = useState<Campaign[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const fetchCampaigns = async () => {
       try {
-        const res = await get('/api/campaigns') // Replace with actual endpoint
-        setCampaigns(res || [])
+        const res = await get('/mail/getcampaigns')
+        if (res?.status === 'success') {
+          setCampaigns(res.data)
+        } else {
+          throw new Error(res?.message || 'Unexpected API response')
+        }
       } catch (err) {
+        console.error(err)
         toast.error('Failed to fetch campaigns')
       } finally {
         setLoading(false)
       }
     }
-
     fetchCampaigns()
   }, [])
 
-  return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-800">Campaigns</h1>
-        <p className="text-sm text-gray-600">Manage and monitor all running and past campaigns.</p>
+  if (loading) {
+    return (
+      <div className="p-4">
+        <Skeleton className="h-6 w-1/3 mb-4" />
+        <Skeleton className="h-40 rounded-lg" />
       </div>
+    )
+  }
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {loading ? (
-          Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton key={i} className="h-32 rounded-xl" />
-          ))
-        ) : campaigns.length === 0 ? (
-          <p className="text-gray-500">No campaigns found.</p>
-        ) : (
-          campaigns.map((campaign) => (
-            <Card key={campaign._id} className="border shadow-sm hover:shadow-md transition">
-              <CardContent className="p-4 space-y-1 text-sm">
-                <h2 className="text-lg font-semibold text-gray-800">{campaign.title}</h2>
-                <p>
-                  <span className="font-medium text-gray-700">Leads:</span> {campaign.leads}
-                </p>
-                <p>
-                  <span className="font-medium text-gray-700">Start Date:</span>{' '}
-                  {new Date(campaign.startDate).toLocaleDateString()}
-                </p>
-                <p className={`font-medium text-sm ${campaign.status === 'active'
-                    ? 'text-green-600'
-                    : campaign.status === 'paused'
-                      ? 'text-yellow-600'
-                      : 'text-gray-500'
-                  }`}>
-                  {campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1)}
-                </p>
-              </CardContent>
-            </Card>
-          ))
-        )}
-      </div>
+  return (
+    <div className="space-y-6 bg-white p-6 rounded-lg shadow-md">
+      <h1 className="mb-2 text-2xl font-bold">Campaigns</h1>
+      <p className="mb-6 text-sm text-gray-600">
+        All mail campaigns you’ve sent
+      </p>
+
+      {campaigns.length === 0 ? (
+        <p className="text-gray-500">No campaigns found.</p>
+      ) : (
+        <Table>
+          <TableCaption>List of all sent campaigns</TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Activity Name</TableHead>
+              <TableHead>Subject</TableHead>
+              <TableHead>No. of Emails</TableHead>
+              <TableHead>Sent On</TableHead>
+              <TableHead>By</TableHead>
+              <TableHead>Action</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {campaigns.map(c => (
+              <TableRow key={c.campaignId}>
+                <TableCell>{c.activityName}</TableCell>
+                <TableCell>{c.subject}</TableCell>
+                <TableCell>{c.contacts.length}</TableCell>
+                <TableCell>
+                  {new Date(c.sentAt).toLocaleDateString()}
+                </TableCell>
+                <TableCell>{c.marketerName}</TableCell>
+                <TableCell>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() =>
+                      router.push(`/admin/campaigns/view?id=${c.campaignId}`)
+                    }
+                  >
+                    View
+                  </Button>
+                </TableCell>
+
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      )}
     </div>
   )
 }

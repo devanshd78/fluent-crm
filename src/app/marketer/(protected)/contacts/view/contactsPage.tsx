@@ -82,6 +82,7 @@ export default function ActivityViewPage() {
     if (activityId) fetchActivity()
   }, [activityId])
 
+
   const handleCSVUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file || !activityId) return
@@ -112,7 +113,7 @@ export default function ActivityViewPage() {
       await MySwal.fire({
         icon: 'error',
         title: 'Upload Failed',
-        text: err.message || 'Could not upload CSV.',
+        text: err.response.data.message || 'Could not upload CSV.',
         showConfirmButton: false,
         timer: 1500,
         timerProgressBar: true,
@@ -153,7 +154,7 @@ export default function ActivityViewPage() {
       await MySwal.fire({
         icon: 'error',
         title: 'Add Contact Failed',
-        text: err.message || 'Something went wrong.',
+        text: err.response.data.message || 'Something went wrong.',
         showConfirmButton: false,
         timer: 1500,
         timerProgressBar: true,
@@ -174,7 +175,7 @@ export default function ActivityViewPage() {
   if (!activity) {
     return (
       <div className="p-6 text-center text-muted-foreground bg-white rounded-lg shadow-sm border">
-        <p className="text-lg font-medium">Activity not found.</p>
+        <p className="text-lg font-medium">Contacts not found.</p>
         <div className="mt-4">
           <Button variant="outline" onClick={() => router.back()}>
             Go Back
@@ -190,14 +191,19 @@ export default function ActivityViewPage() {
   return (
     <div className="p-6 max-w-5xl mx-auto space-y-6 bg-white rounded-lg shadow-sm border">
       <div className="space-y-1">
-        <h1 className="text-3xl font-bold text-gray-900">Activity Overview</h1>
-        <p className="text-sm text-muted-foreground">Details and contacts for selected activity</p>
+        <h1 className="text-3xl font-bold text-gray-900">Conatcts Overview</h1>
+
+        <div className="text-right">
+          <Button variant="outline" onClick={() => router.back()}>
+            Back
+          </Button>
+        </div>
       </div>
 
       <Card>
         <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-6 p-6">
           <div>
-            <p className="text-sm text-muted-foreground">Activity Name</p>
+            <p className="text-sm text-muted-foreground">Contacts Name</p>
             <p className="text-lg font-semibold">{activity.name}</p>
           </div>
           <div>
@@ -219,6 +225,7 @@ export default function ActivityViewPage() {
               <p className="text-sm text-muted-foreground">
                 {activity.contacts.length} contact{activity.contacts.length !== 1 && 's'}
               </p>
+
             </div>
             <div className="flex items-center gap-2">
               <Button variant="outline" size="sm" onClick={() => setIsModalOpen(true)}>
@@ -227,11 +234,11 @@ export default function ActivityViewPage() {
 
               <label htmlFor="csvUpload" className="cursor-pointer">
                 <Button variant="outline" size="sm" asChild>
-                  <span>Upload CSV</span>
+                  <span>Upload CSV or Excel</span>
                 </Button>
                 <input
                   type="file"
-                  accept=".csv"
+                  accept=".csv, .xlsx, .xls"
                   id="csvUpload"
                   onChange={handleCSVUpload}
                   className="hidden"
@@ -401,12 +408,6 @@ export default function ActivityViewPage() {
           )}
         </CardContent>
       </Card>
-
-      <div className="text-right">
-        <Button variant="outline" onClick={() => router.back()}>
-          Back
-        </Button>
-      </div>
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent>
           <DialogHeader>

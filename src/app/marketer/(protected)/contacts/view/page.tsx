@@ -1,5 +1,6 @@
+// app/admin/(protected)/campaigns/view/page.tsx
 import React, { Suspense } from 'react'
-import ActivityViewPage from './activityPage'
+import ActivityViewPage from './contactsPage'
 
 export default function ViewContacsPage() {
   return (

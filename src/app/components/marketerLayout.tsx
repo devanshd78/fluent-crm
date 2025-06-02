@@ -7,9 +7,9 @@ import { cn } from '@/lib/utils'
 
 const navItems = [
   { name: 'Dashboard', path: '/marketer/dashboard' },
-  { name: 'Activity', path: '/marketer/activity' },
+  { name: 'Contacts', path: '/marketer/contacts' },
   { name: 'Campaigns', path: '/marketer/campaigns' },
-  { name: 'Templates', path: '/marketer/templates' },
+  { name: 'E-Mail Templates', path: '/marketer/template' },
 ]
 
 export default function MarketerSidebar({
